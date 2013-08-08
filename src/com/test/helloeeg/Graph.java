@@ -20,12 +20,37 @@ public class Graph {
     volatile TimeSeries series;
     private GraphicalView view;
     private Context context;
+    private long start;
 
     public Graph(Context context) {
         this.context = context;
     }
 
+    public GraphicalView start() {
+        start = System.currentTimeMillis();
+        series = new TimeSeries("line1");
+
+        XYMultipleSeriesDataset dataset = new XYMultipleSeriesDataset();
+        dataset.addSeries(series);
+
+        XYMultipleSeriesRenderer mRenderer = new XYMultipleSeriesRenderer();
+        XYSeriesRenderer renderer = new XYSeriesRenderer();
+        mRenderer.addSeriesRenderer(renderer);
+
+        view = ChartFactory.getLineChartView(context, dataset, mRenderer);
+        return view;
+    }
+
+    public void add(int value) {
+        series.add(System.currentTimeMillis() - start, value);
+        if (view != null) {
+            view.repaint();
+            System.out.println("Repaint " + value);
+        }
+    }
+
     public GraphicalView getView() {
+        start = System.currentTimeMillis();
         int[] x = {1,2};
         int[] y = {3,4};
 

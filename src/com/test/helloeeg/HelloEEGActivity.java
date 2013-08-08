@@ -19,6 +19,7 @@ public class HelloEEGActivity extends Activity {
 	
 	TextView tv;
 	Button b;
+    Graph graph;
 	
 	TGDevice tgDevice;
 	final boolean rawEnabled = true;
@@ -32,15 +33,15 @@ public class HelloEEGActivity extends Activity {
         tv.setText("");
         tv.append("Android version: " + Integer.valueOf(android.os.Build.VERSION.SDK) + "\n" );
         bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-//        if(bluetoothAdapter == null) {
-//        	// Alert user that Bluetooth is not available
-//        	Toast.makeText(this, "Bluetooth not available", Toast.LENGTH_LONG).show();
-//        	finish();
-//        	return;
-//        }else {
-//        	/* create the TGDevice */
-//        	tgDevice = new TGDevice(bluetoothAdapter, handler);
-//        }
+        if(bluetoothAdapter == null) {
+        	// Alert user that Bluetooth is not available
+        	Toast.makeText(this, "Bluetooth not available", Toast.LENGTH_LONG).show();
+        	finish();
+        	return;
+        }else {
+        	/* create the TGDevice */
+        	tgDevice = new TGDevice(bluetoothAdapter, handler);
+        }
     }
     
     @Override
@@ -85,6 +86,7 @@ public class HelloEEGActivity extends Activity {
             case TGDevice.MSG_RAW_DATA:	  
             		//raw1 = msg.arg1;
             		tv.append("Got raw: " + msg.arg1 + "\n");
+                    if (graph != null) graph.add(msg.arg1);
             	break;
             case TGDevice.MSG_HEART_RATE:
         		tv.append("Heart rate: " + msg.arg1 + "\n");
@@ -116,16 +118,11 @@ public class HelloEEGActivity extends Activity {
     };
     
     public void doStuff(View view) {
-//    	if(tgDevice.getState() != TGDevice.STATE_CONNECTING && tgDevice.getState() != TGDevice.STATE_CONNECTED)
-//    		tgDevice.connect(rawEnabled);
+    	if(tgDevice.getState() != TGDevice.STATE_CONNECTING && tgDevice.getState() != TGDevice.STATE_CONNECTED)
+    		tgDevice.connect(rawEnabled);
 
-//        Graph graph = new Graph(findViewById(R.id.graph));
-//        startActivity(graph.getIntent(this));
-
-        Graph graph = new Graph(this);
+        graph = new Graph(this);
         LinearLayout chartContainer = (LinearLayout) findViewById(R.id.graph);
-        chartContainer.addView(graph.getView());
-
-    	//tgDevice.ena
+        chartContainer.addView(graph.start());
     }
 }
