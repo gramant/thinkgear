@@ -22,7 +22,7 @@ public class HelloEEGActivity extends Activity {
     Graph graph;
 
     TGDevice tgDevice;
-    final boolean rawEnabled = true;
+    final boolean rawEnabled = false;
 
     /**
      * Called when the activity is first created.
@@ -31,6 +31,7 @@ public class HelloEEGActivity extends Activity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
+        graph = new Graph(this);
         tv = (TextView) findViewById(R.id.textView1);
         tv.setText("");
         tv.append("Android version: " + Integer.valueOf(android.os.Build.VERSION.SDK) + "\n");
@@ -89,7 +90,7 @@ public class HelloEEGActivity extends Activity {
                 case TGDevice.MSG_RAW_DATA:
                     //raw1 = msg.arg1;
                     tv.append("Got raw: " + msg.arg1 + "\n");
-                    if (graph != null) graph.add(msg.arg1);
+                    graph.add("raw", msg.arg1);
                     break;
                 case TGDevice.MSG_HEART_RATE:
                     tv.append("Heart rate: " + msg.arg1 + "\n");
@@ -114,6 +115,22 @@ public class HelloEEGActivity extends Activity {
                 case TGDevice.MSG_RAW_MULTI:
                     TGRawMulti rawM = (TGRawMulti) msg.obj;
                     tv.append("Raw1: " + rawM.ch1 + "\nRaw2: " + rawM.ch2);
+                    break;
+                case TGDevice.MSG_EEG_POWER:
+                    TGEegPower power = (TGEegPower) msg.obj;
+                    tv.append("Power: delta:" + power.delta + "; highAlpha:" + power.highAlpha
+                            + "; highBeta:" + power.highBeta + "; lowAlpha:" + power.lowAlpha
+                            + "; lowBeta:" + power.lowBeta + "; lowGamma:" + power.lowGamma
+                            + "; midGamma:" + power.midGamma + "; theta: " + power.theta);
+                    graph.add("delta", power.delta);
+                    graph.add("highAlpha", power.highAlpha);
+                    graph.add("highBeta", power.highBeta);
+                    graph.add("lowAlpha", power.lowAlpha);
+                    graph.add("lowBeta", power.lowBeta);
+                    graph.add("lowGamma", power.lowGamma);
+                    graph.add("midGamma", power.midGamma);
+                    graph.add("theta", power.theta);
+                    break;
                 default:
                     break;
             }
@@ -124,7 +141,6 @@ public class HelloEEGActivity extends Activity {
         if (tgDevice.getState() != TGDevice.STATE_CONNECTING && tgDevice.getState() != TGDevice.STATE_CONNECTED)
             tgDevice.connect(rawEnabled);
 
-        graph = new Graph(this);
         LinearLayout chartContainer = (LinearLayout) findViewById(R.id.graph);
         chartContainer.addView(graph.start());
     }

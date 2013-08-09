@@ -12,12 +12,15 @@ import org.achartengine.model.XYMultipleSeriesDataset;
 import org.achartengine.renderer.XYMultipleSeriesRenderer;
 import org.achartengine.renderer.XYSeriesRenderer;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * Created by fedor.belov on 08.08.13.
  */
 public class Graph {
 
-    volatile TimeSeries series;
+    final Map<String, TimeSeries> seriesByName = new HashMap<String, TimeSeries>();
     private GraphicalView view;
     private Context context;
     private long start;
@@ -28,68 +31,29 @@ public class Graph {
 
     public GraphicalView start() {
         start = System.currentTimeMillis();
-        series = new TimeSeries("line1");
 
         XYMultipleSeriesDataset dataset = new XYMultipleSeriesDataset();
-        dataset.addSeries(series);
-
         XYMultipleSeriesRenderer mRenderer = new XYMultipleSeriesRenderer();
-        XYSeriesRenderer renderer = new XYSeriesRenderer();
-        mRenderer.addSeriesRenderer(renderer);
+
+        for (String s : new String[] {"raw", "highAlpha", "highBeta", "lowAlpha", "lowBeta", "lowGamma", "midGamma", "theta", "delta"}) {
+            TimeSeries series = new TimeSeries(s);
+            seriesByName.put(s, series);
+            dataset.addSeries(series);
+
+            XYSeriesRenderer renderer = new XYSeriesRenderer();
+            mRenderer.addSeriesRenderer(renderer);
+        }
 
         view = ChartFactory.getLineChartView(context, dataset, mRenderer);
         return view;
     }
 
-    public void add(int value) {
-        series.add(System.currentTimeMillis() - start, value);
+    public void add(String name, int value) {
+        seriesByName.get(name).add(System.currentTimeMillis() - start, value);
         if (view != null) {
             view.repaint();
-            System.out.println("Repaint " + value);
+            System.out.println("Repaint " + name + ":" + value);
         }
     }
-
-    public GraphicalView getView() {
-        start = System.currentTimeMillis();
-        int[] x = {1,2};
-        int[] y = {3,4};
-
-        series = new TimeSeries("line1");
-        for (int i = 0; i < x.length; i++) {
-            series.add(x[i], y[i]);
-        }
-
-        Thread t = new Thread() {
-
-            @Override
-            public void run() {
-                for (int i = 3; i < 100; i++) {
-                    series.add(i, i*1.2);
-                    if (view != null) view.repaint();
-                    try {
-                        sleep(1000);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-
-        };
-
-        t.start();
-
-        XYMultipleSeriesDataset dataset = new XYMultipleSeriesDataset();
-        dataset.addSeries(series);
-
-        XYMultipleSeriesRenderer mRenderer = new XYMultipleSeriesRenderer();
-        XYSeriesRenderer renderer = new XYSeriesRenderer();
-        mRenderer.addSeriesRenderer(renderer);
-
-        view = (GraphicalView) ChartFactory.getLineChartView(context, dataset, mRenderer);
-        return view;
-//        return ChartFactory.getLineChartIntent(context, dataset, mRenderer, "hello world");
-    }
-
-
 
 }
