@@ -121,7 +121,7 @@ public class HelloEEGActivity extends Activity {
                     tv.append("Power: delta:" + power.delta + "; highAlpha:" + power.highAlpha
                             + "; highBeta:" + power.highBeta + "; lowAlpha:" + power.lowAlpha
                             + "; lowBeta:" + power.lowBeta + "; lowGamma:" + power.lowGamma
-                            + "; midGamma:" + power.midGamma + "; theta: " + power.theta);
+                            + "; midGamma:" + power.midGamma + "; theta: " + power.theta + "\n");
                     graph.add("delta", power.delta);
                     graph.add("highAlpha", power.highAlpha);
                     graph.add("highBeta", power.highBeta);

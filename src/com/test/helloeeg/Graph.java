@@ -2,6 +2,7 @@ package com.test.helloeeg;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.view.View;
 
 import org.achartengine.ChartFactory;
@@ -32,15 +33,22 @@ public class Graph {
     public GraphicalView start() {
         start = System.currentTimeMillis();
 
+        String[] seriesArray = new String[] {"raw", "highAlpha", "highBeta", "lowAlpha", "lowBeta", "lowGamma", "midGamma", "theta", "delta"};
+        int[] colorsArray = new int[] {Color.DKGRAY, Color.YELLOW, Color.GREEN, Color.RED, Color.CYAN, Color.GRAY, Color.WHITE, Color.BLUE, Color.MAGENTA};
+
         XYMultipleSeriesDataset dataset = new XYMultipleSeriesDataset();
         XYMultipleSeriesRenderer mRenderer = new XYMultipleSeriesRenderer();
 
-        for (String s : new String[] {"raw", "highAlpha", "highBeta", "lowAlpha", "lowBeta", "lowGamma", "midGamma", "theta", "delta"}) {
+        for (int i = 0; i < seriesArray.length; i++) {
+            String s = seriesArray[i];
+            int color = colorsArray[i];
+
             TimeSeries series = new TimeSeries(s);
             seriesByName.put(s, series);
             dataset.addSeries(series);
 
             XYSeriesRenderer renderer = new XYSeriesRenderer();
+            renderer.setColor(color);
             mRenderer.addSeriesRenderer(renderer);
         }
 
@@ -49,7 +57,7 @@ public class Graph {
     }
 
     public void add(String name, int value) {
-        seriesByName.get(name).add(System.currentTimeMillis() - start, value);
+        seriesByName.get(name).add(System.currentTimeMillis() - start, (value > 30000) ? 30000 : value);
         if (view != null) {
             view.repaint();
             System.out.println("Repaint " + name + ":" + value);
