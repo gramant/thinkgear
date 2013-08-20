@@ -14,12 +14,17 @@ import android.widget.Toast;
 
 import com.neurosky.thinkgear.*;
 
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.ConcurrentLinkedQueue;
+
 public class HelloEEGActivity extends Activity {
     BluetoothAdapter bluetoothAdapter;
 
     TextView tv;
     Button b;
     Graph graph;
+    DataFlusher flusher;
 
     TGDevice tgDevice;
     final boolean rawEnabled = false;
@@ -50,6 +55,7 @@ public class HelloEEGActivity extends Activity {
     @Override
     public void onDestroy() {
         tgDevice.close();
+        if (flusher != null) flusher.stop();
         super.onDestroy();
     }
 
@@ -130,6 +136,8 @@ public class HelloEEGActivity extends Activity {
                     graph.add("lowGamma", power.lowGamma);
                     graph.add("midGamma", power.midGamma);
                     graph.add("theta", power.theta);
+
+                    flusher.add(combine(new Object[]{power.delta, power.highAlpha, power.highBeta, power.lowAlpha, power.lowBeta, power.lowGamma, power.midGamma, power.theta}, ";"));
                     break;
                 default:
                     break;
@@ -141,7 +149,22 @@ public class HelloEEGActivity extends Activity {
         if (tgDevice.getState() != TGDevice.STATE_CONNECTING && tgDevice.getState() != TGDevice.STATE_CONNECTED)
             tgDevice.connect(rawEnabled);
 
+        flusher = new DataFlusher(this, System.currentTimeMillis() + ".txt");
+        flusher.start();
+
         LinearLayout chartContainer = (LinearLayout) findViewById(R.id.graph);
         chartContainer.addView(graph.start());
+    }
+
+    private String combine(Object[] s, String glue)
+    {
+        int k=s.length;
+        if (k==0)
+            return null;
+        StringBuilder out=new StringBuilder();
+        out.append(s[0].toString());
+        for (int x=1;x<k;++x)
+            out.append(glue).append(s[x].toString());
+        return out.toString();
     }
 }
