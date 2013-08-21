@@ -17,17 +17,15 @@ public class DataFlusher {
 
     private volatile boolean active = true;
     private String file;
-    private Context context;
     private ConcurrentLinkedQueue<Event> events = new ConcurrentLinkedQueue<Event>();
 
-    public DataFlusher(Context context, String file) {
-        this.context = context;
+    public DataFlusher(String file) {
         this.file = file;
     }
 
     void start() {
         try {
-            File f = new File(Environment.getExternalStorageDirectory().toString() + "/thinkgear", file);
+            File f = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS) + "/thinkgear", file);
             f.getParentFile().mkdirs();
             FileOutputStream fOut = new FileOutputStream(f);
             final OutputStreamWriter osw = new OutputStreamWriter(fOut);
