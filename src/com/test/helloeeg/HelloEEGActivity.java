@@ -2,7 +2,9 @@ package com.test.helloeeg;
 
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothDevice;
 import android.content.Context;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -243,10 +245,10 @@ public class HelloEEGActivity extends Activity {
         Date now = new Date();
         String date = dateFormat.format(now);
         String time = timeFormat.format(now);
-        String androidId = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
-        String bluetoothName = getLocalBluetoothName();
+        String androidId = (Build.MODEL + "-" + Build.VERSION.RELEASE);
+        String bluetoothName = getTargetBluetoothName();
 
-        return combine(new Object[]{date, androidId, bluetoothName, time}, "-") + ".txt";
+        return FileNameCleaner.cleanFileName(combine(new Object[]{date, androidId, bluetoothName, time}, "-") + ".txt");
     }
 
     private String combine(Object[] s, String glue)
@@ -262,12 +264,9 @@ public class HelloEEGActivity extends Activity {
     }
 
     //http://stackoverflow.com/questions/6662216/display-android-bluetooth-device-name
-    public String getLocalBluetoothName(){
-        String name = bluetoothAdapter.getName();
-        if(name == null){
-            System.out.println("Name is null!");
-            name = bluetoothAdapter.getAddress();
-        }
-        return name;
+    public String getTargetBluetoothName(){
+        BluetoothDevice device = tgDevice.getConnectedDevice();
+        String name = (device != null) ? tgDevice.getConnectedDevice().getName() : null;
+        return (name != null) ? name : "-";
     }
 }
