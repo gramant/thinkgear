@@ -1,4 +1,4 @@
-package com.test.helloeeg;
+package ru.gramant.thinkgear;
 
 import android.content.Context;
 import android.content.Intent;

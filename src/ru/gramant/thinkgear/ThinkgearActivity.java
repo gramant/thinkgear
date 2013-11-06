@@ -1,15 +1,12 @@
-package com.test.helloeeg;
+package ru.gramant.thinkgear;
 
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
-import android.content.Context;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.provider.Settings;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
@@ -20,11 +17,8 @@ import com.neurosky.thinkgear.*;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.ConcurrentLinkedQueue;
 
-public class HelloEEGActivity extends Activity {
+public class ThinkGearActivity extends Activity {
     BluetoothAdapter bluetoothAdapter;
 
     TextView tv;

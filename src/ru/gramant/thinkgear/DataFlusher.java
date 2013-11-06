@@ -1,4 +1,4 @@
-package com.test.helloeeg;
+package ru.gramant.thinkgear;
 
 import android.content.Context;
 import android.os.Environment;
@@ -17,7 +17,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
  */
 public class DataFlusher {
 
-    private static final String LOG_CATEGORY = "com.test.helloeeg.DataFlusher";
+    private static final String LOG_CATEGORY = "ru.gramant.thinkgear.DataFlusher";
 
     private volatile boolean active = true;
     private String file;

@@ -1,4 +1,4 @@
-package com.test.helloeeg;
+package ru.gramant.thinkgear;
 
 import java.util.Arrays;
 
