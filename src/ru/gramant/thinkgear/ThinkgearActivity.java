@@ -92,6 +92,10 @@ public class ThinkGearActivity extends Activity {
      * Handles messages from TGDevice
      */
     private final Handler handler = new Handler() {
+
+        private int LAST_ATTENTION = -1;
+        private int LAST_MEDITATION = -1;
+
         @Override
         public void handleMessage(Message msg) {
             switch (msg.what) {
@@ -133,10 +137,10 @@ public class ThinkGearActivity extends Activity {
                 case TGDevice.MSG_ATTENTION:
                     //att = msg.arg1;
                     doLog("Attention: " + msg.arg1);
-                    //Log.v("HelloA", "Attention: " + att + "\n");
+                    LAST_ATTENTION = msg.arg1;
                     break;
                 case TGDevice.MSG_MEDITATION:
-
+                    LAST_MEDITATION = msg.arg1;
                     break;
                 case TGDevice.MSG_BLINK:
                     doLog("Blink: " + msg.arg1);
@@ -166,7 +170,7 @@ public class ThinkGearActivity extends Activity {
                     doGraph("midGamma", power.midGamma);
                     doGraph("theta", power.theta);
 
-                    flushData(power.delta, power.highAlpha, power.highBeta, power.lowAlpha, power.lowBeta, power.lowGamma, power.midGamma, power.theta);
+                    flushData(power.delta, power.highAlpha, power.highBeta, power.lowAlpha, power.lowBeta, power.lowGamma, power.midGamma, power.theta, LAST_ATTENTION, LAST_MEDITATION);
                     break;
                 default:
                     break;
@@ -194,7 +198,7 @@ public class ThinkGearActivity extends Activity {
     private void startFlusher() {
         flusher = new DataFlusher(getFileName());
         flusher.start();
-        flushData("delta", "highAlpha", "highBeta", "lowAlpha", "lowBeta", "lowGamma", "midGamma", "theta");
+        flushData("delta", "highAlpha", "highBeta", "lowAlpha", "lowBeta", "lowGamma", "midGamma", "theta", "attention", "meditation");
     }
 
     private void stopFlusher() {
@@ -231,8 +235,8 @@ public class ThinkGearActivity extends Activity {
         }
     }
 
-    private void flushData(Object delta, Object highAlpha, Object highBeta, Object lowAlpha, Object lowBeta, Object lowGamma, Object midGamma, Object theta) {
-        if (flusher != null) flusher.add(combine(new Object[]{delta, highAlpha, highBeta, lowAlpha, lowBeta, lowGamma, midGamma, theta}, ";"));
+    private void flushData(Object delta, Object highAlpha, Object highBeta, Object lowAlpha, Object lowBeta, Object lowGamma, Object midGamma, Object theta, Object attention, Object meditation) {
+        if (flusher != null) flusher.add(combine(new Object[]{delta, highAlpha, highBeta, lowAlpha, lowBeta, lowGamma, midGamma, theta, attention, meditation}, ";"));
     }
 
     private String getFileName() {
