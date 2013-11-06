@@ -2,6 +2,8 @@ package ru.gramant.thinkgear;
 
 import android.content.Context;
 import android.os.Environment;
+import android.text.format.DateFormat;
+import android.text.format.Time;
 import android.util.Log;
 
 import java.io.File;
@@ -10,7 +12,10 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
+import java.util.Date;
 import java.util.concurrent.ConcurrentLinkedQueue;
+
+import ru.gramant.thinkgear.utils.FormatUtils;
 
 /**
  * Created by fedor.belov on 20.08.13.
@@ -43,7 +48,7 @@ public class DataFlusher {
                         while (active) {
                             Event e = events.poll();
                             while (e != null) {
-                                osw.println(e.second + ";" + e.data);
+                                osw.println(FormatUtils.dateToHumanTime(e.millis) + ";" + e.data);
                                 osw.flush();
 
                                 e = events.poll();
@@ -83,11 +88,11 @@ public class DataFlusher {
     }
 
     private static class Event {
-        Long second;
+        Long millis;
         String data;
 
-        private Event(Long second, String data) {
-            this.second = second;
+        private Event(Long millis, String data) {
+            this.millis = millis;
             this.data = data;
         }
     }
