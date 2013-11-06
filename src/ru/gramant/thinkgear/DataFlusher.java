@@ -32,9 +32,9 @@ public class DataFlusher {
         this.file = file;
     }
 
-    void start() {
+    public void start() {
         try {
-            File f = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS) + "/thinkgear", file);
+            File f = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS) + "/" + App.ROOT_FOLDER, file);
             f.getParentFile().mkdirs();
             FileOutputStream fOut = new FileOutputStream(f);
             final PrintWriter osw = new PrintWriter(new OutputStreamWriter(fOut));
@@ -48,7 +48,12 @@ public class DataFlusher {
                         while (active) {
                             Event e = events.poll();
                             while (e != null) {
-                                osw.println(FormatUtils.dateToHumanTime(e.millis) + ";" + e.data);
+                                if (e.millis > 0) {
+                                    osw.println(FormatUtils.dateToHumanTime(e.millis) + ";" + e.data);
+                                } else {
+                                    osw.println(e.data);
+                                }
+
                                 osw.flush();
 
                                 e = events.poll();
@@ -79,19 +84,27 @@ public class DataFlusher {
         }
     }
 
-    void add(String data) {
+    public void add(String data) {
         events.offer(new Event(System.currentTimeMillis(), data));
     }
 
-    void stop() {
+    public void addWithoutTime(String data) {
+        events.offer(new Event(-1, data));
+    }
+
+    public void stop() {
         active = false;
+    }
+
+    public boolean isActive() {
+        return active;
     }
 
     private static class Event {
         Long millis;
         String data;
 
-        private Event(Long millis, String data) {
+        private Event(long millis, String data) {
             this.millis = millis;
             this.data = data;
         }

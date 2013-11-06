@@ -1,10 +1,13 @@
 package ru.gramant.thinkgear;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
+import android.content.DialogInterface;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.view.View;
@@ -15,8 +18,16 @@ import android.widget.Toast;
 
 import com.neurosky.thinkgear.*;
 
+import org.apache.commons.io.FileUtils;
+
+import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+
+import ru.gramant.thinkgear.phase.Phase;
+import ru.gramant.thinkgear.phase.PhaseHistory;
+import ru.gramant.thinkgear.utils.FileNameUtils;
+import ru.gramant.thinkgear.utils.FormatUtils;
 
 public class ThinkGearActivity extends Activity {
     BluetoothAdapter bluetoothAdapter;
@@ -25,13 +36,12 @@ public class ThinkGearActivity extends Activity {
     LinearLayout chartContainer;
     Button b;
     private volatile Graph graph;
+    private volatile PhaseHistory history;
     private volatile DataFlusher flusher;
     private volatile Boolean log = false;
 
     TGDevice tgDevice;
     final boolean rawEnabled = false;
-    private SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy.MM.dd");
-    private SimpleDateFormat timeFormat = new SimpleDateFormat("HH-mm-ss");
 
     /**
      * Called when the activity is first created.
@@ -62,6 +72,7 @@ public class ThinkGearActivity extends Activity {
             @Override
             public void onClick(View view) {
                 startFlusher();
+                startHistory();
                 buttonStart.setVisibility(View.GONE);
                 buttonStop.setVisibility(View.VISIBLE);
             }
@@ -71,10 +82,50 @@ public class ThinkGearActivity extends Activity {
             @Override
             public void onClick(View view) {
                 stopFlusher();
+                stopHistory();
                 buttonStop.setVisibility(View.GONE);
                 buttonStart.setVisibility(View.VISIBLE);
             }
         });
+
+        initPhaseHistoryOrAlertError();
+    }
+
+    private void initPhaseHistoryOrAlertError() {
+        String message = null;
+
+        try {
+            String fileName = "config.txt";
+            String fileFullPath = App.ROOT_FOLDER + "/" + fileName;
+            File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS) + "/" + App.ROOT_FOLDER, fileName);
+
+            if (!file.exists()) {
+                message = "Config file " + fileFullPath + " is not found";
+            } else {
+                String config = FileUtils.readFileToString(file);
+                if (config == null || config.equals("")) {
+                    message = "Config file " + fileFullPath + " is empty";
+                } else {
+                    Phase[] phases = PhaseHistory.parseConfig(config);
+                    if (phases == null) {
+                        message = "Unable to parse config file " + fileFullPath;
+                    } else {
+                        history = new PhaseHistory(phases, config);
+                    }
+                }
+            }
+        } catch (Exception e) {
+            message = "Exception on reading history phase config file - " + e.getMessage();
+            e.printStackTrace();
+        }
+
+        if (message != null && !message.equals("")) {
+            final AlertDialog.Builder alert = new AlertDialog.Builder(this);
+            alert.setTitle("Unable to start phase history");
+            alert.setMessage(message + "\n" + "Phase history file will not be saved!");
+            alert.setNegativeButton("OK", null);
+            alert.show();
+        }
     }
 
     @Override
@@ -170,7 +221,7 @@ public class ThinkGearActivity extends Activity {
                     doGraph("midGamma", power.midGamma);
                     doGraph("theta", power.theta);
 
-                    flushData(power.delta, power.highAlpha, power.highBeta, power.lowAlpha, power.lowBeta, power.lowGamma, power.midGamma, power.theta, LAST_ATTENTION, LAST_MEDITATION);
+                    flushData(new Params(power.delta, power.highAlpha, power.highBeta, power.lowAlpha, power.lowBeta, power.lowGamma, power.midGamma, power.theta, LAST_ATTENTION, LAST_MEDITATION));
                     break;
                 default:
                     break;
@@ -196,9 +247,13 @@ public class ThinkGearActivity extends Activity {
     }
 
     private void startFlusher() {
-        flusher = new DataFlusher(getFileName());
+        flusher = new DataFlusher(FileNameUtils.getFileName(tgDevice, "log"));
         flusher.start();
-        flushData("delta", "highAlpha", "highBeta", "lowAlpha", "lowBeta", "lowGamma", "midGamma", "theta", "attention", "meditation");
+        flushData(FormatUtils.arrayToString(new Object[]{"delta", "highAlpha", "highBeta", "lowAlpha", "lowBeta", "lowGamma", "midGamma", "theta", "attention", "meditation"}, ";"));
+    }
+
+    private void startHistory() {
+        if (history != null) history.start(tgDevice);
     }
 
     private void stopFlusher() {
@@ -206,6 +261,10 @@ public class ThinkGearActivity extends Activity {
             flusher.stop();
             flusher = null;
         }
+    }
+
+    private void stopHistory() {
+        if (history != null) history.stop();
     }
 
     public synchronized void onLogClick(View view) {
@@ -235,36 +294,12 @@ public class ThinkGearActivity extends Activity {
         }
     }
 
-    private void flushData(Object delta, Object highAlpha, Object highBeta, Object lowAlpha, Object lowBeta, Object lowGamma, Object midGamma, Object theta, Object attention, Object meditation) {
-        if (flusher != null) flusher.add(combine(new Object[]{delta, highAlpha, highBeta, lowAlpha, lowBeta, lowGamma, midGamma, theta, attention, meditation}, ";"));
+    private void flushData(Params params) {
+        if (flusher != null) flusher.add(params.toString());
+        if (history != null) history.flushData(params);
     }
 
-    private String getFileName() {
-        Date now = new Date();
-        String date = dateFormat.format(now);
-        String time = timeFormat.format(now);
-        String androidId = (Build.MODEL + "-" + Build.VERSION.RELEASE);
-        String bluetoothName = getTargetBluetoothName();
-
-        return FileNameCleaner.cleanFileName(combine(new Object[]{date, androidId, bluetoothName, time}, "-") + ".txt");
-    }
-
-    private String combine(Object[] s, String glue)
-    {
-        int k=s.length;
-        if (k==0)
-            return null;
-        StringBuilder out=new StringBuilder();
-        out.append(s[0].toString());
-        for (int x=1;x<k;++x)
-            out.append(glue).append(s[x].toString());
-        return out.toString();
-    }
-
-    //http://stackoverflow.com/questions/6662216/display-android-bluetooth-device-name
-    public String getTargetBluetoothName(){
-        BluetoothDevice device = tgDevice.getConnectedDevice();
-        String name = (device != null) ? tgDevice.getConnectedDevice().getName() : null;
-        return (name != null) ? name : "-";
+    private void flushData(String data) {
+        if (flusher != null) flusher.add(data);
     }
 }
