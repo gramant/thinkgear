@@ -2,18 +2,22 @@ package com.test.helloeeg;
 
 import android.content.Context;
 import android.os.Environment;
+import android.util.Log;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 /**
  * Created by fedor.belov on 20.08.13.
  */
 public class DataFlusher {
+
+    private static final String LOG_CATEGORY = "com.test.helloeeg.DataFlusher";
 
     private volatile boolean active = true;
     private String file;
@@ -28,7 +32,9 @@ public class DataFlusher {
             File f = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS) + "/thinkgear", file);
             f.getParentFile().mkdirs();
             FileOutputStream fOut = new FileOutputStream(f);
-            final OutputStreamWriter osw = new OutputStreamWriter(fOut);
+            final PrintWriter osw = new PrintWriter(new OutputStreamWriter(fOut));
+
+            Log.w(LOG_CATEGORY, "Saving data to file " + f.getAbsolutePath());
 
             new Thread() {
                 @Override
@@ -37,7 +43,7 @@ public class DataFlusher {
                         while (active) {
                             Event e = events.poll();
                             while (e != null) {
-                                osw.write(e.second + ";" + e.data + "\n");
+                                osw.println(e.second + ";" + e.data);
                                 osw.flush();
 
                                 e = events.poll();
@@ -49,12 +55,14 @@ public class DataFlusher {
                                 e1.printStackTrace();
                             }
                         }
-                    } catch (IOException ioe) {
+                    } catch (Exception ioe) {
+                        Log.e(LOG_CATEGORY, "Exception on saving thingear file!", ioe);
                         ioe.printStackTrace();
                     } finally {
                         try {
                             osw.close();
-                        } catch (IOException e) {
+                        } catch (Exception e) {
+                            Log.e(LOG_CATEGORY, "Exception on saving thingear file!", e);
                             e.printStackTrace();
                         }
                     }
