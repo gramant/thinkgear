@@ -8,7 +8,7 @@ import ru.gramant.thinkgear.Params;
 public class Phase {
 
     String name;
-    boolean isActive = true;
+    boolean isActive = false;
     MinMax delta;
     MinMax highAlpha;
     MinMax highBeta;

@@ -21,7 +21,7 @@ public class Params {
     public Params(int delta, int highAlpha, int highBeta, int lowAlpha, int lowBeta, int lowGamma, int midGamma, int theta, int attention, int meditation) {
         this.delta = delta;
         this.highAlpha = highAlpha;
-        this.highAlpha = highBeta;
+        this.highBeta = highBeta;
         this.lowAlpha = lowAlpha;
         this.lowBeta = lowBeta;
         this.lowGamma = lowGamma;
