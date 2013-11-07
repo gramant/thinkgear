@@ -35,4 +35,10 @@ public class Params {
     public String toString() {
         return FormatUtils.arrayToString(new Object[]{delta, highAlpha, highBeta, lowAlpha, lowBeta, lowGamma, midGamma, theta, attention, meditation}, ";");
     }
+
+    public static String[] getNames() {
+        return new String[]{
+                "delta", "highAlpha", "highBeta", "lowAlpha", "lowBeta", "lowGamma", "midGamma", "theta", "attention", "meditation"
+        };
+    }
 }

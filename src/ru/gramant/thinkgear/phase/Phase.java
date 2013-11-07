@@ -20,6 +20,10 @@ public class Phase {
     MinMax attention;
     MinMax meditation;
 
+    public Phase(String name) {
+        this.name = name;
+    }
+
     /**
      * @return true when state was changed
      */
@@ -52,5 +56,33 @@ public class Phase {
 
     public boolean isActive() {
         return isActive;
+    }
+
+    public void setActive(boolean active) {
+        isActive = active;
+    }
+
+    public void set(String name, MinMax value) {
+        if ("delta".equals(name)) {
+            delta = value;
+        } else if ("highAlpha".equals(name)) {
+            highAlpha = value;
+        } else if ("highBeta".equals(name)) {
+            highBeta = value;
+        } else if ("lowAlpha".equals(name)) {
+            lowAlpha = value;
+        } else if ("lowBeta".equals(name)) {
+            lowBeta = value;
+        } else if ("lowGamma".equals(name)) {
+            lowGamma = value;
+        } else if ("midGamma".equals(name)) {
+            midGamma = value;
+        } else if ("theta".equals(name)) {
+            theta = value;
+        } else if ("attention".equals(name)) {
+            attention = value;
+        } else if ("meditation".equals(name)) {
+            meditation = value;
+        }
     }
 }

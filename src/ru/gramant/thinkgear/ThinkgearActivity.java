@@ -25,6 +25,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import ru.gramant.thinkgear.phase.Phase;
+import ru.gramant.thinkgear.phase.PhaseConfig;
 import ru.gramant.thinkgear.phase.PhaseHistory;
 import ru.gramant.thinkgear.utils.FileNameUtils;
 import ru.gramant.thinkgear.utils.FormatUtils;
@@ -106,7 +107,7 @@ public class ThinkGearActivity extends Activity {
                 if (config == null || config.equals("")) {
                     message = "Config file " + fileFullPath + " is empty";
                 } else {
-                    Phase[] phases = PhaseHistory.parseConfig(config);
+                    Phase[] phases = PhaseConfig.parseConfig(config);
                     if (phases == null) {
                         message = "Unable to parse config file " + fileFullPath;
                     } else {

@@ -2,6 +2,9 @@ package ru.gramant.thinkgear.phase;
 
 import com.neurosky.thinkgear.TGDevice;
 
+import java.util.LinkedList;
+import java.util.List;
+
 import ru.gramant.thinkgear.DataFlusher;
 import ru.gramant.thinkgear.Params;
 import ru.gramant.thinkgear.utils.FileNameUtils;
@@ -20,18 +23,23 @@ public class PhaseHistory {
         this.config = config;
     }
 
-    public void start(TGDevice device) {
+    public synchronized void start(TGDevice device) {
         flusher = new DataFlusher(FileNameUtils.getFileName(device, "history"));
         flusher.start();
         flusher.addWithoutTime(config);
         flusher.addWithoutTime("----------------------");
+
+        //reset phases state
+        for (Phase phase : phases) {
+            phase.setActive(false);
+        }
     }
 
-    public void stop() {
+    public synchronized void stop() {
         flusher.stop();
     }
 
-    public void flushData(Params params) {
+    public synchronized void flushData(Params params) {
         for (Phase phase : phases) {
             if (phase.checkStateChange(params)) {
                 flushEvent(phase.getName(), (phase.isActive()) ? "ENTER" : "EXIT");
@@ -40,10 +48,7 @@ public class PhaseHistory {
     }
 
     private void flushEvent(String phase, String action) {
-        if (flusher.isActive()) flusher.add(phase + ": " + action);
+        if (flusher != null && flusher.isActive()) flusher.add(phase + ": " + action);
     }
 
-    public static Phase[] parseConfig(String config) {
-        return null; //todo
-    }
 }
