@@ -11,6 +11,8 @@ import ru.gramant.thinkgear.Params;
 public class PhaseConfig {
 
     public static Phase[] parseConfig(String config) {
+        if (config == null || "".equals(config)) return null;
+
         String[] paramNames = Params.getNames();
         List<Phase> phases = new LinkedList<Phase>();
 

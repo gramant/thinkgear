@@ -5,6 +5,8 @@ package ru.gramant.thinkgear.phase;
  */
 public class MinMax {
 
+    public static final MinMax ZERO = new MinMax(0,0);
+
     int min;
     int max;
 
@@ -21,5 +23,25 @@ public class MinMax {
         } else {
             return false;
         }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        MinMax minMax = (MinMax) o;
+
+        if (max != minMax.max) return false;
+        if (min != minMax.min) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = min;
+        result = 31 * result + max;
+        return result;
     }
 }

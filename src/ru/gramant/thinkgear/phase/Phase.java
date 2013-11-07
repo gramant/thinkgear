@@ -85,4 +85,51 @@ public class Phase {
             meditation = value;
         }
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Phase phase = (Phase) o;
+
+        if (isActive != phase.isActive) return false;
+        if (attention != null ? !attention.equals(phase.attention) : phase.attention != null)
+            return false;
+        if (delta != null ? !delta.equals(phase.delta) : phase.delta != null) return false;
+        if (highAlpha != null ? !highAlpha.equals(phase.highAlpha) : phase.highAlpha != null)
+            return false;
+        if (highBeta != null ? !highBeta.equals(phase.highBeta) : phase.highBeta != null)
+            return false;
+        if (lowAlpha != null ? !lowAlpha.equals(phase.lowAlpha) : phase.lowAlpha != null)
+            return false;
+        if (lowBeta != null ? !lowBeta.equals(phase.lowBeta) : phase.lowBeta != null) return false;
+        if (lowGamma != null ? !lowGamma.equals(phase.lowGamma) : phase.lowGamma != null)
+            return false;
+        if (meditation != null ? !meditation.equals(phase.meditation) : phase.meditation != null)
+            return false;
+        if (midGamma != null ? !midGamma.equals(phase.midGamma) : phase.midGamma != null)
+            return false;
+        if (!name.equals(phase.name)) return false;
+        if (theta != null ? !theta.equals(phase.theta) : phase.theta != null) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = name.hashCode();
+        result = 31 * result + (isActive ? 1 : 0);
+        result = 31 * result + (delta != null ? delta.hashCode() : 0);
+        result = 31 * result + (highAlpha != null ? highAlpha.hashCode() : 0);
+        result = 31 * result + (highBeta != null ? highBeta.hashCode() : 0);
+        result = 31 * result + (lowAlpha != null ? lowAlpha.hashCode() : 0);
+        result = 31 * result + (lowBeta != null ? lowBeta.hashCode() : 0);
+        result = 31 * result + (lowGamma != null ? lowGamma.hashCode() : 0);
+        result = 31 * result + (midGamma != null ? midGamma.hashCode() : 0);
+        result = 31 * result + (theta != null ? theta.hashCode() : 0);
+        result = 31 * result + (attention != null ? attention.hashCode() : 0);
+        result = 31 * result + (meditation != null ? meditation.hashCode() : 0);
+        return result;
+    }
 }
