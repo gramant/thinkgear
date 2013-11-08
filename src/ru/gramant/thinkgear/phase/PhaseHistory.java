@@ -24,7 +24,7 @@ public class PhaseHistory {
     }
 
     public synchronized void start(TGDevice device) {
-        flusher = new DataFlusher(FileNameUtils.getFileName(device, "history"));
+        flusher = new DataFlusher(FileNameUtils.getHistoryFileName(device));
         flusher.start();
         flusher.addWithoutTime(config);
         flusher.addWithoutTime("----------------------");

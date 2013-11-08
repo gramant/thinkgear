@@ -31,4 +31,14 @@ public class FileNameUtils {
         return FileNameCleaner.cleanFileName(FormatUtils.arrayToString(new Object[]{androidId, bluetoothName, fileType, date, time}, "-") + ".txt");
     }
 
+    public static String getHistoryFileName(TGDevice tgDevice) {
+        Date now = new Date();
+        String date = dateFormat.format(now);
+        String time = timeFormat.format(now);
+        String androidId = (Build.MODEL + "-" + Build.VERSION.RELEASE);
+        String bluetoothName = BluetoothUtils.getTargetBluetoothName(tgDevice);
+
+        return "History_" + FileNameCleaner.cleanFileName(FormatUtils.arrayToString(new Object[]{date, time, androidId, bluetoothName}, "-") + ".txt");
+    }
+
 }
