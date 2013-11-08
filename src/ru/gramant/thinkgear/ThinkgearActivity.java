@@ -192,6 +192,7 @@ public class ThinkGearActivity extends Activity {
                     LAST_ATTENTION = msg.arg1;
                     break;
                 case TGDevice.MSG_MEDITATION:
+                    doLog("Mediation: " + msg.arg1);
                     LAST_MEDITATION = msg.arg1;
                     break;
                 case TGDevice.MSG_BLINK:
