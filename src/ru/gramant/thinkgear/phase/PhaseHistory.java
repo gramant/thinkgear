@@ -2,6 +2,8 @@ package ru.gramant.thinkgear.phase;
 
 import com.neurosky.thinkgear.TGDevice;
 
+import org.apache.commons.lang.StringUtils;
+
 import java.util.LinkedList;
 import java.util.List;
 
@@ -17,6 +19,8 @@ public class PhaseHistory {
     private DataFlusher flusher;
     private Phase[] phases;
     private String config;
+    private boolean multipleActive = false;
+    private boolean zeroActive = false;
 
     public PhaseHistory(Phase[] phases, String config) {
         this.phases = phases;
@@ -40,9 +44,28 @@ public class PhaseHistory {
     }
 
     public synchronized void flushData(Params params) {
+        List<String> active = new LinkedList<String>();
+
         for (Phase phase : phases) {
             if (phase.checkStateChange(params)) {
                 flushEvent(phase.getName(), (phase.isActive()) ? "ENTER" : "EXIT");
+            }
+
+            if (phase.isActive()) active.add(phase.getName());
+        }
+
+        if (active.size() == 0) {
+            if (!zeroActive) {
+                flushString("Zero active states!");
+                zeroActive = true;
+            }
+        } else if (active.size() == 1) {
+            multipleActive = false;
+            zeroActive = false;
+        } else {
+            if (!multipleActive) {
+                flushString("Multiple active states: " + StringUtils.join(active, ", "));
+                multipleActive = true;
             }
         }
     }

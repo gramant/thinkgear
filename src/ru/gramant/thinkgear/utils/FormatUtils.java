@@ -2,6 +2,7 @@ package ru.gramant.thinkgear.utils;
 
 import android.text.format.DateFormat;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /**
@@ -9,8 +10,10 @@ import java.util.Date;
  */
 public class FormatUtils {
 
+    private static SimpleDateFormat timeFormat = new SimpleDateFormat("k:mm:ss.SSS");
+
     public static String dateToHumanTime(Long millis) {
-        return DateFormat.format("k:mm:ss", new Date(millis)).toString();
+        return timeFormat.format(new Date(millis));
     }
 
     public static String arrayToString(Object[] s, String glue) {
