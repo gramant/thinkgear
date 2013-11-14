@@ -4,7 +4,11 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
@@ -178,6 +182,7 @@ public class ThinkGearActivity extends Activity {
                             break;
                         case TGDevice.STATE_DISCONNECTED:
                             tv.append("Disconnected mang\n");
+                            reconnectDevice();
                     }
 
                     break;
@@ -237,6 +242,40 @@ public class ThinkGearActivity extends Activity {
             }
         }
     };
+
+    private void reconnectDevice() {
+        int tries = 1200; //1 hour to reconnect
+        boolean first = true;
+
+        while (tries > 0) {
+            boolean connecting = false;
+
+            if (tgDevice.getState() == TGDevice.STATE_CONNECTED) {
+                return;
+            } else if (tgDevice.getState() == TGDevice.STATE_CONNECTING) {
+                connecting = true;
+            } else {
+                tgDevice.connect(rawEnabled);
+            }
+
+            if (!connecting) {
+                if (!first) {
+                    flushHistoryString("failed to reconnect device");
+                }
+
+                tries--;
+                first = false;
+            }
+
+            try {
+                Thread.sleep(1000*3);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+
+        flushHistoryString("Unable to reconnect to device!");
+    }
 
     public void doStuff(View view) {
         if (tgDevice.getState() != TGDevice.STATE_CONNECTING && tgDevice.getState() != TGDevice.STATE_CONNECTED)
@@ -310,5 +349,9 @@ public class ThinkGearActivity extends Activity {
 
     private void flushData(String data) {
         if (flusher != null) flusher.add(data);
+    }
+
+    private void flushHistoryString(String message) {
+        if (history != null) history.flushString(message);
     }
 }
