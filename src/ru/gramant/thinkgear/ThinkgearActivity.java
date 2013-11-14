@@ -31,6 +31,7 @@ import ru.gramant.thinkgear.utils.FileNameUtils;
 import ru.gramant.thinkgear.utils.FormatUtils;
 
 public class ThinkGearActivity extends Activity {
+    PowerLock lock;
     BluetoothAdapter bluetoothAdapter;
 
     TextView tv;
@@ -50,6 +51,9 @@ public class ThinkGearActivity extends Activity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        lock = new PowerLock(this);
+
         setContentView(R.layout.main);
         chartContainer = (LinearLayout) findViewById(R.id.graph);
         tv = (TextView) findViewById(R.id.textView1);
@@ -76,6 +80,7 @@ public class ThinkGearActivity extends Activity {
                 startHistory();
                 buttonStart.setVisibility(View.GONE);
                 buttonStop.setVisibility(View.VISIBLE);
+                lock.acquire();
             }
         });
 
@@ -86,6 +91,7 @@ public class ThinkGearActivity extends Activity {
                 stopHistory();
                 buttonStop.setVisibility(View.GONE);
                 buttonStart.setVisibility(View.VISIBLE);
+                lock.release();
             }
         });
 
@@ -134,6 +140,7 @@ public class ThinkGearActivity extends Activity {
         super.onDestroy();
         if (isFinishing()) {
             tgDevice.close();
+            lock.release();
             stopFlusher();
         } else {
             //just orientation change
