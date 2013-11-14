@@ -47,8 +47,12 @@ public class PhaseHistory {
         }
     }
 
+    public synchronized void flushString(String message) {
+        if (flusher != null && flusher.isActive()) flusher.add(message);
+    }
+
     private void flushEvent(String phase, String action) {
-        if (flusher != null && flusher.isActive()) flusher.add(phase + ": " + action);
+        flushString(phase + ": " + action);
     }
 
 }
