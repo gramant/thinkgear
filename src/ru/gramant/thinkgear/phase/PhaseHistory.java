@@ -16,18 +16,40 @@ import ru.gramant.thinkgear.utils.FileNameUtils;
  */
 public class PhaseHistory {
 
+    private Integer CHECK_FOR_EVENTS_EACH_MS = 3000;
     private DataFlusher flusher;
     private Phase[] phases;
     private String config;
     private boolean multipleActive = false;
     private boolean zeroActive = false;
+    private long lastEventTime = -1;
 
     public PhaseHistory(Phase[] phases, String config) {
         this.phases = phases;
         this.config = config;
+
+        Thread thread = new Thread() {
+            @Override
+            public void run() {
+                try {
+                    while(true) {
+                        sleep(CHECK_FOR_EVENTS_EACH_MS);
+
+                        if (isActive() && (System.currentTimeMillis() - lastEventTime) > CHECK_FOR_EVENTS_EACH_MS) {
+                            flushString("no data for last 3 secs");
+                        }
+                    }
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        };
+
+        thread.start();
     }
 
     public synchronized void start(TGDevice device) {
+        lastEventTime = System.currentTimeMillis();
         flusher = new DataFlusher(FileNameUtils.getHistoryFileName(device));
         flusher.start();
         flusher.addWithoutTime(config);
@@ -44,6 +66,8 @@ public class PhaseHistory {
     }
 
     public synchronized void flushData(Params params) {
+        lastEventTime = System.currentTimeMillis();
+
         List<String> active = new LinkedList<String>();
 
         for (Phase phase : phases) {
@@ -71,7 +95,11 @@ public class PhaseHistory {
     }
 
     public synchronized void flushString(String message) {
-        if (flusher != null && flusher.isActive()) flusher.add(message);
+        if (isActive()) flusher.add(message);
+    }
+
+    private boolean isActive() {
+        return flusher != null && flusher.isActive();
     }
 
     private void flushEvent(String phase, String action) {
