@@ -244,7 +244,7 @@ public class ThinkGearActivity extends Activity {
     };
 
     private void reconnectDevice() {
-        int tries = 1200; //1 hour to reconnect
+        int tries = 120; //1 hour to reconnect
         boolean first = true;
 
         while (tries > 0) {
@@ -268,7 +268,7 @@ public class ThinkGearActivity extends Activity {
             }
 
             try {
-                Thread.sleep(1000*3);
+                Thread.sleep(1000*30);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
