@@ -158,6 +158,10 @@ public class ThinkGearActivity extends Activity {
 
         private int LAST_ATTENTION = -1;
         private int LAST_MEDITATION = -1;
+        private int LAST_BLINK = -1;
+        private int LAST_RAW_COUNT = -1;
+        private int LAST_POOR_SIGNAL = -1;
+        private int LAST_RAW_VALUE = -1;
 
         @Override
         public void handleMessage(Message msg) {
@@ -189,11 +193,13 @@ public class ThinkGearActivity extends Activity {
                 case TGDevice.MSG_POOR_SIGNAL:
                     //signal = msg.arg1;
                     doLog("PoorSignal: " + msg.arg1);
+                    LAST_POOR_SIGNAL = msg.arg1;
                     break;
                 case TGDevice.MSG_RAW_DATA:
-                    //raw1 = msg.arg1;
+//                    raw1 = msg.arg1;
                     doLog("Got raw: " + msg.arg1);
                     doGraph("raw", msg.arg1);
+                    LAST_RAW_VALUE = msg.arg1;
                     break;
                 case TGDevice.MSG_HEART_RATE:
                     doLog("Heart rate: " + msg.arg1);
@@ -209,9 +215,11 @@ public class ThinkGearActivity extends Activity {
                     break;
                 case TGDevice.MSG_BLINK:
                     doLog("Blink: " + msg.arg1);
+                    LAST_BLINK = msg.arg1;
                     break;
                 case TGDevice.MSG_RAW_COUNT:
                     doLog("Raw Count: " + msg.arg1);
+                    LAST_RAW_COUNT = msg.arg1;
                     break;
                 case TGDevice.MSG_LOW_BATTERY:
                     Toast.makeText(getApplicationContext(), "Low battery!", Toast.LENGTH_SHORT).show();
@@ -235,7 +243,21 @@ public class ThinkGearActivity extends Activity {
                     doGraph("midGamma", power.midGamma);
                     doGraph("theta", power.theta);
 
-                    flushData(new Params(power.delta, power.highAlpha, power.highBeta, power.lowAlpha, power.lowBeta, power.lowGamma, power.midGamma, power.theta, LAST_ATTENTION, LAST_MEDITATION));
+                    flushData(new Params(
+                            power.delta,
+                            power.highAlpha,
+                            power.highBeta,
+                            power.lowAlpha,
+                            power.lowBeta,
+                            power.lowGamma,
+                            power.midGamma,
+                            power.theta,
+                            LAST_ATTENTION,
+                            LAST_MEDITATION,
+                            LAST_BLINK,
+                            LAST_RAW_COUNT,
+                            LAST_RAW_VALUE,
+                            LAST_POOR_SIGNAL));
                     break;
                 default:
                     break;
@@ -297,7 +319,7 @@ public class ThinkGearActivity extends Activity {
     private void startFlusher() {
         flusher = new DataFlusher(FileNameUtils.getFileName(tgDevice, "log"));
         flusher.start();
-        flushData(FormatUtils.arrayToString(new Object[]{"delta", "highAlpha", "highBeta", "lowAlpha", "lowBeta", "lowGamma", "midGamma", "theta", "attention", "meditation"}, ";"));
+        flusher.add(FormatUtils.arrayToString(Params.getLogParamNames(), ";"));
     }
 
     private void startHistory() {
@@ -343,7 +365,7 @@ public class ThinkGearActivity extends Activity {
     }
 
     private void flushData(Params params) {
-        if (flusher != null) flusher.add(params.toString());
+        if (flusher != null) flusher.add(FormatUtils.arrayToString(params.getLogParams(), ";"));
         if (history != null) history.flushData(params);
     }
 

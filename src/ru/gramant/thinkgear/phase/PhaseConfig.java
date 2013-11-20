@@ -13,7 +13,7 @@ public class PhaseConfig {
     public static Phase[] parseConfig(String config) {
         if (config == null || "".equals(config)) return null;
 
-        String[] paramNames = Params.getNames();
+        String[] paramNames = Params.getHistoryConfigNames();
         List<Phase> phases = new LinkedList<Phase>();
 
         String lines[] = config.split("[\\r\\n]+");

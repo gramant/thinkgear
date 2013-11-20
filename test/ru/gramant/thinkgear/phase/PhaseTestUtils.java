@@ -10,7 +10,7 @@ public class PhaseTestUtils {
     public static Phase getPhase(String name, MinMax... params) {
         int i = 0;
         Phase answer = new Phase(name);
-        String[] names = Params.getNames();
+        String[] names = Params.getHistoryConfigNames();
 
         for(MinMax param : params) {
             answer.set(names[i], param);

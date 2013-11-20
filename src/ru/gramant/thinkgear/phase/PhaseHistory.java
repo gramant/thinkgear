@@ -22,6 +22,7 @@ public class PhaseHistory {
     private String config;
     private boolean multipleActive = false;
     private boolean zeroActive = false;
+    private volatile boolean noDataForLastSeconds = false;
     private long lastEventTime = -1;
 
     public PhaseHistory(Phase[] phases, String config) {
@@ -36,7 +37,12 @@ public class PhaseHistory {
                         sleep(CHECK_FOR_EVENTS_EACH_MS);
 
                         if (isActive() && (System.currentTimeMillis() - lastEventTime) > CHECK_FOR_EVENTS_EACH_MS) {
-                            flushString("no data for last 3 secs");
+                            if (!noDataForLastSeconds) {
+                                flushString("no data for last 3 secs");
+                                noDataForLastSeconds = true;
+                            }
+                        } else {
+                            noDataForLastSeconds = false;
                         }
                     }
                 } catch (InterruptedException e) {
