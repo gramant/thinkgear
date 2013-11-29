@@ -21,8 +21,10 @@ public class Params {
     public int rawCount;
     public int rawValue;
     public int poorSignal;
+    public int heartRate;
+    public int rrInt;
 
-    public Params(int delta, int highAlpha, int highBeta, int lowAlpha, int lowBeta, int lowGamma, int midGamma, int theta, int attention, int meditation, int blink, int rawCount, int rawValue, int poorSignal) {
+    public Params(int delta, int highAlpha, int highBeta, int lowAlpha, int lowBeta, int lowGamma, int midGamma, int theta, int attention, int meditation, int blink, int rawCount, int rawValue, int poorSignal, int heartRate, int rrInt) {
         this.delta = delta;
         this.highAlpha = highAlpha;
         this.highBeta = highBeta;
@@ -37,14 +39,16 @@ public class Params {
         this.rawCount = rawCount;
         this.rawValue = rawValue;
         this.poorSignal = poorSignal;
+        this.heartRate = heartRate;
+        this.rrInt = rrInt;
     }
 
     public static String[] getLogParamNames() {
-        return new String[]{"delta", "highAlpha", "highBeta", "lowAlpha", "lowBeta", "lowGamma", "midGamma", "theta", "attention", "meditation", "blink", "rawCount", "rawValue", "poorSignal"};
+        return new String[]{"delta", "highAlpha", "highBeta", "lowAlpha", "lowBeta", "lowGamma", "midGamma", "theta", "attention", "meditation", "blink", "rawCount", "rawValue", "poorSignal", "heartRate", "rrInt"};
     }
 
     public Integer[] getLogParams() {
-        return new Integer[]{delta, highAlpha, highBeta, lowAlpha, lowBeta, lowGamma, midGamma, theta, attention, meditation, blink, rawCount, rawValue, poorSignal};
+        return new Integer[]{delta, highAlpha, highBeta, lowAlpha, lowBeta, lowGamma, midGamma, theta, attention, meditation, blink, rawCount, rawValue, poorSignal, heartRate, rrInt};
     }
 
     public static String[] getHistoryConfigNames() {

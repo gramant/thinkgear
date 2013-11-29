@@ -162,6 +162,8 @@ public class ThinkGearActivity extends Activity {
         private int LAST_RAW_COUNT = -1;
         private int LAST_POOR_SIGNAL = -1;
         private int LAST_RAW_VALUE = -1;
+        private int LAST_HEART_RATE = -1;
+        private int LAST_RRINT = -1;
 
         @Override
         public void handleMessage(Message msg) {
@@ -181,12 +183,12 @@ public class ThinkGearActivity extends Activity {
                         case TGDevice.STATE_NOT_FOUND:
                             tv.append("Can't find\n");
                             break;
-                        case TGDevice.STATE_NOT_PAIRED:
-                            tv.append("not paired\n");
-                            break;
                         case TGDevice.STATE_DISCONNECTED:
                             tv.append("Disconnected mang\n");
                             reconnectDevice();
+                        default:
+                            tv.append("Other MSG_STATE_CHANGE - " + msg.arg1);
+                            break;
                     }
 
                     break;
@@ -194,6 +196,9 @@ public class ThinkGearActivity extends Activity {
                     //signal = msg.arg1;
                     doLog("PoorSignal: " + msg.arg1);
                     LAST_POOR_SIGNAL = msg.arg1;
+                    break;
+                case TGDevice.MSG_ZONE:
+                    //don't really know what's this
                     break;
                 case TGDevice.MSG_RAW_DATA:
 //                    raw1 = msg.arg1;
@@ -203,6 +208,11 @@ public class ThinkGearActivity extends Activity {
                     break;
                 case TGDevice.MSG_HEART_RATE:
                     doLog("Heart rate: " + msg.arg1);
+                    LAST_HEART_RATE = msg.arg1;
+                    break;
+                case TGDevice.MSG_EKG_RRINT:
+                    doLog("R-R Interval: " + msg.arg1);
+                    LAST_RRINT = msg.arg1;
                     break;
                 case TGDevice.MSG_ATTENTION:
                     //att = msg.arg1;
@@ -220,6 +230,9 @@ public class ThinkGearActivity extends Activity {
                 case TGDevice.MSG_RAW_COUNT:
                     doLog("Raw Count: " + msg.arg1);
                     LAST_RAW_COUNT = msg.arg1;
+                    break;
+                case TGDevice.MSG_SLEEP_STAGE:
+                    doLog("Sleep stage: " + msg.arg1);
                     break;
                 case TGDevice.MSG_LOW_BATTERY:
                     Toast.makeText(getApplicationContext(), "Low battery!", Toast.LENGTH_SHORT).show();
@@ -257,9 +270,16 @@ public class ThinkGearActivity extends Activity {
                             LAST_BLINK,
                             LAST_RAW_COUNT,
                             LAST_RAW_VALUE,
-                            LAST_POOR_SIGNAL));
+                            LAST_POOR_SIGNAL,
+                            LAST_HEART_RATE,
+                            LAST_RRINT));
+
+                    LAST_BLINK = 0;
+                    LAST_HEART_RATE = 0;
+                    LAST_RRINT = 0;
                     break;
                 default:
+                    tv.append("Other message - " + msg.what + "\n");
                     break;
             }
         }
