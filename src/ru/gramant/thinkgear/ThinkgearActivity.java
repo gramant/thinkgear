@@ -26,7 +26,10 @@ import org.apache.commons.io.FileUtils;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.LinkedList;
+import java.util.List;
 
 import ru.gramant.thinkgear.phase.Phase;
 import ru.gramant.thinkgear.phase.PhaseConfig;
@@ -158,12 +161,14 @@ public class ThinkGearActivity extends Activity {
 
         private int LAST_ATTENTION = -1;
         private int LAST_MEDITATION = -1;
-        private int LAST_BLINK = -1;
         private int LAST_RAW_COUNT = -1;
         private int LAST_POOR_SIGNAL = -1;
         private int LAST_RAW_VALUE = -1;
         private int LAST_HEART_RATE = -1;
         private int LAST_RRINT = -1;
+        private int LAST_SLEEP_STAGE = -1;
+        private final List<Integer> BLINK_EMPTY = Arrays.asList(0);
+        private List<Integer> blink = new LinkedList<Integer>();
 
         @Override
         public void handleMessage(Message msg) {
@@ -197,9 +202,9 @@ public class ThinkGearActivity extends Activity {
                     doLog("PoorSignal: " + msg.arg1);
                     LAST_POOR_SIGNAL = msg.arg1;
                     break;
-                case TGDevice.MSG_ZONE:
-                    //don't really know what's this
-                    break;
+//                case TGDevice.MSG_ZONE:
+//                    //don't really know what's this
+//                    break;
                 case TGDevice.MSG_RAW_DATA:
 //                    raw1 = msg.arg1;
                     doLog("Got raw: " + msg.arg1);
@@ -210,10 +215,10 @@ public class ThinkGearActivity extends Activity {
                     doLog("Heart rate: " + msg.arg1);
                     LAST_HEART_RATE = msg.arg1;
                     break;
-                case TGDevice.MSG_EKG_RRINT:
-                    doLog("R-R Interval: " + msg.arg1);
-                    LAST_RRINT = msg.arg1;
-                    break;
+//                case TGDevice.MSG_EKG_RRINT:
+//                    doLog("R-R Interval: " + msg.arg1);
+//                    LAST_RRINT = msg.arg1;
+//                    break;
                 case TGDevice.MSG_ATTENTION:
                     //att = msg.arg1;
                     doLog("Attention: " + msg.arg1);
@@ -225,7 +230,7 @@ public class ThinkGearActivity extends Activity {
                     break;
                 case TGDevice.MSG_BLINK:
                     doLog("Blink: " + msg.arg1);
-                    LAST_BLINK = msg.arg1;
+                    blink.add(msg.arg1);
                     break;
                 case TGDevice.MSG_RAW_COUNT:
                     doLog("Raw Count: " + msg.arg1);
@@ -233,6 +238,7 @@ public class ThinkGearActivity extends Activity {
                     break;
                 case TGDevice.MSG_SLEEP_STAGE:
                     doLog("Sleep stage: " + msg.arg1);
+                    LAST_SLEEP_STAGE = msg.arg1;
                     break;
                 case TGDevice.MSG_LOW_BATTERY:
                     Toast.makeText(getApplicationContext(), "Low battery!", Toast.LENGTH_SHORT).show();
@@ -267,16 +273,16 @@ public class ThinkGearActivity extends Activity {
                             power.theta,
                             LAST_ATTENTION,
                             LAST_MEDITATION,
-                            LAST_BLINK,
+                            (blink.size() == 0) ? BLINK_EMPTY : blink,
                             LAST_RAW_COUNT,
                             LAST_RAW_VALUE,
                             LAST_POOR_SIGNAL,
-                            LAST_HEART_RATE,
-                            LAST_RRINT));
+                            LAST_SLEEP_STAGE));
 
-                    LAST_BLINK = 0;
+                    blink.clear();
                     LAST_HEART_RATE = 0;
                     LAST_RRINT = 0;
+                    LAST_SLEEP_STAGE = 0;
                     break;
                 default:
                     tv.append("Other message - " + msg.what + "\n");
