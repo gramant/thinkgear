@@ -169,6 +169,7 @@ public class ThinkGearActivity extends Activity {
         private int LAST_SLEEP_STAGE = -1;
         private final List<Integer> BLINK_EMPTY = Arrays.asList(0);
         private List<Integer> blink = new LinkedList<Integer>();
+        private Params params = new Params();
 
         @Override
         public void handleMessage(Message msg) {
@@ -262,7 +263,7 @@ public class ThinkGearActivity extends Activity {
                     doGraph("midGamma", power.midGamma);
                     doGraph("theta", power.theta);
 
-                    flushData(new Params(
+                    params.flush(
                             power.delta,
                             power.highAlpha,
                             power.highBeta,
@@ -277,7 +278,10 @@ public class ThinkGearActivity extends Activity {
                             LAST_RAW_COUNT,
                             LAST_RAW_VALUE,
                             LAST_POOR_SIGNAL,
-                            LAST_SLEEP_STAGE));
+                            LAST_SLEEP_STAGE
+                    );
+
+                    flushData(params);
 
                     blink.clear();
                     LAST_HEART_RATE = 0;

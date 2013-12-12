@@ -23,7 +23,7 @@ public class FormatUtils {
         StringBuilder out = new StringBuilder();
         out.append(s[0].toString());
         for (int x = 1; x < k; ++x) {
-            if (s[x] != null) out.append(glue).append(s[x].toString());
+            out.append(glue).append((s[x] != null) ? s[x].toString() : " ");
         }
 
         return out.toString();

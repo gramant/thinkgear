@@ -38,14 +38,14 @@ public class Phase {
     }
 
     private boolean isFitValues(Params params) {
-        return delta.fit(params.delta) &&
-                highAlpha.fit(params.highAlpha) &&
-                highBeta.fit(params.highBeta) &&
-                lowAlpha.fit(params.lowAlpha) &&
-                lowBeta.fit(params.lowBeta) &&
-                lowGamma.fit(params.lowGamma) &&
-                midGamma.fit(params.midGamma) &&
-                theta.fit(params.theta) &&
+        return delta.fit(params.delta.raw) &&
+                highAlpha.fit(params.highAlpha.raw) &&
+                highBeta.fit(params.highBeta.raw) &&
+                lowAlpha.fit(params.lowAlpha.raw) &&
+                lowBeta.fit(params.lowBeta.raw) &&
+                lowGamma.fit(params.lowGamma.raw) &&
+                midGamma.fit(params.midGamma.raw) &&
+                theta.fit(params.theta.raw) &&
                 attention.fit(params.attention) &&
                 meditation.fit(params.meditation);
     }

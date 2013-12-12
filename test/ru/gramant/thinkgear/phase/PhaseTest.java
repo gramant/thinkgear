@@ -19,22 +19,22 @@ public class PhaseTest {
         Phase phase = PhaseTestUtils.getPhase("test", doesNotMatter, new MinMax(200, 500), doesNotMatter, new MinMax(10, 50));
         List<Integer> blink = new LinkedList<Integer>();
         State[] states = new State[]{
-                new State(false, false, new Params(4, 10, 0, 15, 0, 0, 0, 0, 0, 0, blink, 0, 0 ,0, 0)),
-                new State(true, true, new Params(999, 366, 999, 15, 0, 0, 7, 99, 12, 0, blink, 0, 0 ,0, 0)),
-                new State(false, true, new Params(4, 250, 0, 45, 0, 0, 12, 88, 0, 0, blink, 0, 0 ,0, 0)),
-                new State(true, false, new Params(4, 350, 0, 55, 0, 0, 0, 0, 7, 12, blink, 0, 0 ,0, 0)),
-                new State(false, false, new Params(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, blink, 0, 0 ,0, 0))
+//                new State(false, false, new Params(4, 10, 0, 15, 0, 0, 0, 0, 0, 0, blink, 0, 0 ,0, 0)),
+//                new State(true, true, new Params(999, 366, 999, 15, 0, 0, 7, 99, 12, 0, blink, 0, 0 ,0, 0)),
+//                new State(false, true, new Params(4, 250, 0, 45, 0, 0, 12, 88, 0, 0, blink, 0, 0 ,0, 0)),
+//                new State(true, false, new Params(4, 350, 0, 55, 0, 0, 0, 0, 7, 12, blink, 0, 0 ,0, 0)),
+//                new State(false, false, new Params(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, blink, 0, 0 ,0, 0))
         };
 
         checkPhase(phase, states);
 
         phase = PhaseTestUtils.getPhase("test-other-params", MinMax.ZERO, MinMax.ZERO, MinMax.ZERO, MinMax.ZERO, new MinMax(90, 100), doesNotMatter, new MinMax(500, 800), doesNotMatter, doesNotMatter, new MinMax(1300, 2000));
         states = new State[]{
-                new State(false, false, new Params(4, 10, 0, 15, 200, 700, 400, 987, 77, 1500, blink, 0, 0 ,0, 0)),
-                new State(true, true, new Params(999, 366, 999, 15, 95, 987, 600, 9, 12, 1900, blink, 0, 0 ,0, 0)),
-                new State(false, true, new Params(4, 350, 0, 55, 99, 0, 500, 0, 7, 2000, blink, 0, 0 ,0, 0)),
-                new State(true, false, new Params(4, 250, 0, 45, 0, 0, 12, 88, 0, 0, blink, 0, 0 ,0, 0)),
-                new State(false, false, new Params(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, blink, 0, 0 ,0, 0))
+//                new State(false, false, new Params(4, 10, 0, 15, 200, 700, 400, 987, 77, 1500, blink, 0, 0 ,0, 0)),
+//                new State(true, true, new Params(999, 366, 999, 15, 95, 987, 600, 9, 12, 1900, blink, 0, 0 ,0, 0)),
+//                new State(false, true, new Params(4, 350, 0, 55, 99, 0, 500, 0, 7, 2000, blink, 0, 0 ,0, 0)),
+//                new State(true, false, new Params(4, 250, 0, 45, 0, 0, 12, 88, 0, 0, blink, 0, 0 ,0, 0)),
+//                new State(false, false, new Params(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, blink, 0, 0 ,0, 0))
         };
 
         checkPhase(phase, states);
