@@ -91,8 +91,8 @@ public class Params {
 
     public static String[] getLogParamNames() {
         return new String[] {
-                "delta", "highAlpha", "highBeta", "lowAlpha", "lowBeta", "lowGamma", "midGamma", "theta",
-                "delta_Clear", "highAlpha_Clear", "highBeta_Clear", "lowAlpha_Clear", "lowBeta_Clear", "lowGamma_Clear", "midGamma_Clear", "theta_Clear", "total_Clear",
+                "delta", "theta", "lowAlpha", "highAlpha", "lowBeta", "highBeta", "lowGamma", "midGamma",
+                "delta_Clear", "theta_Clear", "lowAlpha_Clear", "highAlpha_Clear", "lowBeta_Clear", "highBeta_Clear", "lowGamma_Clear", "midGamma_Clear", "total_Clear",
                 "Delta_1", "Delta_10", "Theta_1", "Theta_10", "lowAlpha_1", "lowAlpha_10", "highAlpha_1", "highAlpha_10", "lowBeta_1", "lowBeta_10", "highBeta_1", "highBeta_10", "lowGamma_1", "lowGamma_10", "midGamma_1", "midGamma_10",
                 "Delta_Max", "Theta_Max", "lowAlpha_Max", "highAlpha_Max", "lowBeta_Max", "highBeta_Max", "lowGamma_Max", "midGamma_Max",
                 "Delta_Sum", "Theta_Sum", "lowAlpha_Sum", "highAlpha_Sum", "lowBeta_Sum", "highBeta_Sum", "lowGamma_Sum", "midGamma_Sum", "Total_Sum",
@@ -119,11 +119,22 @@ public class Params {
     }
 
     public List<Integer> getRawData() {
-        return Arrays.asList(delta.raw, highAlpha.raw, highBeta.raw, lowAlpha.raw, lowBeta.raw, lowGamma.raw, midGamma.raw, theta.raw);
+        return Lists.transform(getEras(false), new Function<LimitedQueueValue, Integer>() {
+            @Override
+            public Integer apply(LimitedQueueValue limitedQueueValue) {
+                return limitedQueueValue.raw;
+            }
+        });
     }
 
     public List<Integer> getClearData() {
-        List<Integer> clear = Lists.newArrayList(delta.clear, highAlpha.clear, highBeta.clear, lowAlpha.clear, lowBeta.clear, lowGamma.clear, midGamma.clear, theta.clear);
+        List<Integer> clear = Lists.newArrayList(Lists.transform(getEras(false), new Function<LimitedQueueValue, Integer>() {
+            @Override
+            public Integer apply(LimitedQueueValue limitedQueueValue) {
+                return limitedQueueValue.clear;
+            }
+        }));
+
         Integer total = CollectionUtils.sum(clear);
         clear.add(total);
 
@@ -179,11 +190,11 @@ public class Params {
             sumEraData = Lists.newArrayList(Lists.transform(getEras(false), new Function<LimitedQueueValue, Integer>() {
                 @Override
                 public Integer apply(LimitedQueueValue limitedQueueValue) {
-                    return null;
+                    return 0;
                 }
             }));
 
-            Integer total = null;
+            Integer total = 0;
             sumEraData.add(total);
         }
 
