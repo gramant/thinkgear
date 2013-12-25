@@ -1,4 +1,4 @@
-package ru.gramant.thinkgear.phase;
+package ru.gramant.thinkgear.raw.phase;
 
 /**
  * Created by fedor.belov on 06.11.13.

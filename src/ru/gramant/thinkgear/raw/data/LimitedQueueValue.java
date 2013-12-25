@@ -1,4 +1,4 @@
-package ru.gramant.thinkgear.data;
+package ru.gramant.thinkgear.raw.data;
 
 import java.util.LinkedList;
 import java.util.List;

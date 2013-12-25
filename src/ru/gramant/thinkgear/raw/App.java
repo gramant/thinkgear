@@ -1,4 +1,4 @@
-package ru.gramant.thinkgear;
+package ru.gramant.thinkgear.raw;
 
 /**
  * Created by fedor.belov on 06.11.13.

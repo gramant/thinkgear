@@ -1,4 +1,4 @@
-package ru.gramant.thinkgear.phase;
+package ru.gramant.thinkgear.raw.phase;
 
 import com.neurosky.thinkgear.TGDevice;
 
@@ -7,9 +7,9 @@ import org.apache.commons.lang.StringUtils;
 import java.util.LinkedList;
 import java.util.List;
 
-import ru.gramant.thinkgear.DataFlusher;
-import ru.gramant.thinkgear.Params;
-import ru.gramant.thinkgear.utils.FileNameUtils;
+import ru.gramant.thinkgear.raw.DataFlusher;
+import ru.gramant.thinkgear.raw.Params;
+import ru.gramant.thinkgear.raw.utils.FileNameUtils;
 
 /**
  * Created by fedor.belov on 06.11.13.

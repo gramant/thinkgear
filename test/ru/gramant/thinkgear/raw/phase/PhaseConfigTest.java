@@ -1,6 +1,5 @@
-package ru.gramant.thinkgear.phase;
+package ru.gramant.thinkgear.raw.phase;
 
-import org.junit.Before;
 import org.junit.Test;
 
 import java.util.Arrays;

@@ -1,6 +1,6 @@
-package ru.gramant.thinkgear.phase;
+package ru.gramant.thinkgear.raw.phase;
 
-import ru.gramant.thinkgear.Params;
+import ru.gramant.thinkgear.raw.Params;
 
 /**
  * Created by fedor.belov on 06.11.13.

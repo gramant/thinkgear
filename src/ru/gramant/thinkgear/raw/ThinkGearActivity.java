@@ -1,15 +1,8 @@
-package ru.gramant.thinkgear;
+package ru.gramant.thinkgear.raw;
 
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.bluetooth.BluetoothAdapter;
-import android.bluetooth.BluetoothDevice;
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.DialogInterface;
-import android.content.Intent;
-import android.content.IntentFilter;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
@@ -25,17 +18,15 @@ import com.neurosky.thinkgear.*;
 import org.apache.commons.io.FileUtils;
 
 import java.io.File;
-import java.text.SimpleDateFormat;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
-import ru.gramant.thinkgear.phase.Phase;
-import ru.gramant.thinkgear.phase.PhaseConfig;
-import ru.gramant.thinkgear.phase.PhaseHistory;
-import ru.gramant.thinkgear.utils.FileNameUtils;
-import ru.gramant.thinkgear.utils.FormatUtils;
+import ru.gramant.thinkgear.raw.phase.Phase;
+import ru.gramant.thinkgear.raw.phase.PhaseConfig;
+import ru.gramant.thinkgear.raw.phase.PhaseHistory;
+import ru.gramant.thinkgear.raw.utils.FileNameUtils;
+import ru.gramant.thinkgear.raw.utils.FormatUtils;
 
 public class ThinkGearActivity extends Activity {
     PowerLock lock;
@@ -50,7 +41,7 @@ public class ThinkGearActivity extends Activity {
     private volatile Boolean log = false;
 
     TGDevice tgDevice;
-    final boolean rawEnabled = false;
+    final boolean rawEnabled = true;
 
     /**
      * Called when the activity is first created.
@@ -170,6 +161,7 @@ public class ThinkGearActivity extends Activity {
         private final List<Integer> BLINK_EMPTY = Arrays.asList(0);
         private List<Integer> blink = new LinkedList<Integer>();
         private Params params = new Params();
+        private TGEegPower LAST_POWER = new TGEegPower(0, 0, 0, 0, 0, 0, 0, 0);
 
         @Override
         public void handleMessage(Message msg) {
@@ -211,6 +203,8 @@ public class ThinkGearActivity extends Activity {
                     doLog("Got raw: " + msg.arg1);
                     doGraph("raw", msg.arg1);
                     LAST_RAW_VALUE = msg.arg1;
+
+                    doFlushData();
                     break;
                 case TGDevice.MSG_HEART_RATE:
                     doLog("Heart rate: " + msg.arg1);
@@ -250,6 +244,7 @@ public class ThinkGearActivity extends Activity {
                     break;
                 case TGDevice.MSG_EEG_POWER:
                     TGEegPower power = (TGEegPower) msg.obj;
+                    LAST_POWER = power;
                     doLog("Power: delta:" + power.delta + "; highAlpha:" + power.highAlpha
                             + "; highBeta:" + power.highBeta + "; lowAlpha:" + power.lowAlpha
                             + "; lowBeta:" + power.lowBeta + "; lowGamma:" + power.lowGamma
@@ -262,36 +257,38 @@ public class ThinkGearActivity extends Activity {
                     doGraph("lowGamma", power.lowGamma);
                     doGraph("midGamma", power.midGamma);
                     doGraph("theta", power.theta);
-
-                    params.flush(
-                            power.delta,
-                            power.highAlpha,
-                            power.highBeta,
-                            power.lowAlpha,
-                            power.lowBeta,
-                            power.lowGamma,
-                            power.midGamma,
-                            power.theta,
-                            LAST_ATTENTION,
-                            LAST_MEDITATION,
-                            (blink.size() == 0) ? BLINK_EMPTY : blink,
-                            LAST_RAW_COUNT,
-                            LAST_RAW_VALUE,
-                            LAST_POOR_SIGNAL,
-                            LAST_SLEEP_STAGE
-                    );
-
-                    flushData(params);
-
-                    blink.clear();
-                    LAST_HEART_RATE = 0;
-                    LAST_RRINT = 0;
-                    LAST_SLEEP_STAGE = 0;
                     break;
                 default:
                     tv.append("Other message - " + msg.what + "\n");
                     break;
             }
+        }
+
+        private void doFlushData() {
+            params.flush(
+                    LAST_POWER.delta,
+                    LAST_POWER.highAlpha,
+                    LAST_POWER.highBeta,
+                    LAST_POWER.lowAlpha,
+                    LAST_POWER.lowBeta,
+                    LAST_POWER.lowGamma,
+                    LAST_POWER.midGamma,
+                    LAST_POWER.theta,
+                    LAST_ATTENTION,
+                    LAST_MEDITATION,
+                    (blink.size() == 0) ? BLINK_EMPTY : blink,
+                    LAST_RAW_COUNT,
+                    LAST_RAW_VALUE,
+                    LAST_POOR_SIGNAL,
+                    LAST_SLEEP_STAGE
+            );
+
+            flushData(params);
+
+            blink.clear();
+            LAST_HEART_RATE = 0;
+            LAST_RRINT = 0;
+            LAST_SLEEP_STAGE = 0;
         }
     };
 
@@ -347,7 +344,7 @@ public class ThinkGearActivity extends Activity {
     }
 
     private void startFlusher() {
-        flusher = new DataFlusher(FileNameUtils.getFileName(tgDevice, "log"));
+        flusher = new DataFlusher(FileNameUtils.getFileName(tgDevice, "log", rawEnabled));
         flusher.start();
         flusher.add(FormatUtils.arrayToString(Params.getLogParamNames(), ";"));
     }

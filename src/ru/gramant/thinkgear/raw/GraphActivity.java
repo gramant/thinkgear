@@ -1,4 +1,4 @@
-package ru.gramant.thinkgear;
+package ru.gramant.thinkgear.raw;
 
 import android.app.Activity;
 import android.os.Bundle;

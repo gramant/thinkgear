@@ -1,13 +1,10 @@
-package ru.gramant.thinkgear;
+package ru.gramant.thinkgear.raw;
 
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.Color;
-import android.view.View;
 
 import org.achartengine.ChartFactory;
 import org.achartengine.GraphicalView;
-import org.achartengine.chart.BarChart;
 import org.achartengine.model.TimeSeries;
 import org.achartengine.model.XYMultipleSeriesDataset;
 import org.achartengine.renderer.XYMultipleSeriesRenderer;

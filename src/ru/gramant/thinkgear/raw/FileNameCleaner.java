@@ -1,4 +1,4 @@
-package ru.gramant.thinkgear;
+package ru.gramant.thinkgear.raw;
 
 import java.util.Arrays;
 

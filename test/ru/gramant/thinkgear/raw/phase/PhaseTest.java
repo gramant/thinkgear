@@ -1,11 +1,11 @@
-package ru.gramant.thinkgear.phase;
+package ru.gramant.thinkgear.raw.phase;
 
 import org.junit.Test;
 
 import java.util.LinkedList;
 import java.util.List;
 
-import ru.gramant.thinkgear.Params;
+import ru.gramant.thinkgear.raw.Params;
 
 /**
  * Created by fedor.belov on 07.11.13.

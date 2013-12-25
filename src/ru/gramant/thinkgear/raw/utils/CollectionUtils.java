@@ -1,4 +1,4 @@
-package ru.gramant.thinkgear.utils;
+package ru.gramant.thinkgear.raw.utils;
 
 import java.util.Collection;
 

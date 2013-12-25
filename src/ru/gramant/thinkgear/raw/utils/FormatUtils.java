@@ -1,6 +1,4 @@
-package ru.gramant.thinkgear.utils;
-
-import android.text.format.DateFormat;
+package ru.gramant.thinkgear.raw.utils;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
